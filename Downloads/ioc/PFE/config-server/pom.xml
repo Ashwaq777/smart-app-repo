@@ -6,8 +6,8 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
 		<groupId>ma.gov.pfe</groupId>
-		<artifactId>MonPFE</artifactId>
-		<version>SNAPSHOT-1.0</version>
+		<artifactId>PFE</artifactId>
+		<version>SNAPSHOT1.0</version>
 	</parent>
 
 	<artifactId>config-server</artifactId>
