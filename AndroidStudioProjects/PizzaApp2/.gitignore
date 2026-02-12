@@ -24,3 +24,25 @@ local.properties
 *.jpeg
 *.heic
 *.gif
+
+# --- SAFETY: never push personal folders ---
+Downloads/
+Movies/
+Music/
+Pictures/
+Public/
+Library/
+Parallels/
+VirtualBox VMs/
+IdeaProjects/
+IdeaSnapshots/
+
+# Common big/temporary stuff
+*.dmg
+*.pkg
+*.exe
+*.mp4
+*.mov
+*.mkv
+*.avi
+
