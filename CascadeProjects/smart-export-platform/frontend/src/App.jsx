@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastProvider } from './components/ui/Toast'
 import { MainLayout } from './components/layout/MainLayout'
 import Home from './pages/Home'
+import About from './pages/About'
 import Admin from './pages/Admin'
 
 function App() {
@@ -13,6 +14,11 @@ function App() {
           <Route path="/" element={
             <MainLayout>
               <Home />
+            </MainLayout>
+          } />
+          <Route path="/about" element={
+            <MainLayout>
+              <About />
             </MainLayout>
           } />
           <Route path="/admin" element={

@@ -18,7 +18,7 @@ export const Header = () => {
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/', label: 'Calculator', hash: '#calculator' },
-    { path: '/', label: 'About Us', hash: '#about' },
+    { path: '/about', label: 'About Us' },
     { path: '/admin', label: 'Admin' },
   ]
 
@@ -35,18 +35,18 @@ export const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-maritime-navy to-accent-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                <Ship className="w-6 h-6 text-white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-maritime-navy via-maritime-deepBlue to-accent-500 rounded-xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300 group-hover:scale-105 border-2 border-accent-500/20">
+                <Ship className="w-7 h-7 text-white drop-shadow-lg" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-accent-500 rounded-full flex items-center justify-center">
-                <Anchor className="w-3 h-3 text-white" />
+              <div className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-gradient-to-br from-accent-500 to-accent-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                <Anchor className="w-3.5 h-3.5 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-maritime-navy leading-tight">
+              <h1 className="text-xl font-bold text-maritime-navy leading-tight tracking-tight">
                 Smart Export
               </h1>
-              <p className="text-xs text-gray-600 leading-tight">
+              <p className="text-xs font-medium text-gray-600 leading-tight">
                 Global Maritime Trade
               </p>
             </div>

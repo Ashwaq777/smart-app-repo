@@ -27,7 +27,7 @@ export const HeroSection = () => {
             </div>
 
             <h1 className="text-5xl md:text-6xl font-bold text-maritime-navy leading-tight">
-              Calculate Your Import Duties with{' '}
+              Export Duties Calculator with{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-500 to-accent-600">
                 Precision
               </span>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Calculator as CalcIcon, Download, AlertCircle } from 'lucide-react'
 import { tarifService, portService, calculationService, pdfService } from '../services/api'
 import CostDashboard from '../components/CostDashboard'
+import { CURRENCIES } from '../utils/currencyConverter'
 
 function Calculator() {
   const [categories, setCategories] = useState([])
@@ -160,7 +161,7 @@ function Calculator() {
     <div className="max-w-7xl mx-auto px-6">
       <div className="text-center mb-12">
         <h2 className="text-4xl md:text-5xl font-bold text-maritime-navy mb-4">
-          Import Duties Calculator
+          Export Duties Calculator
         </h2>
         <div className="w-24 h-1 bg-gradient-to-r from-accent-500 to-accent-600 mx-auto mb-6"></div>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -278,9 +279,11 @@ function Calculator() {
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
               >
-                <option value="MAD" className="bg-dark-hover text-white">MAD - Dirham marocain</option>
-                <option value="EUR" className="bg-dark-hover text-white">EUR - Euro</option>
-                <option value="USD" className="bg-dark-hover text-white">USD - Dollar américain</option>
+                {CURRENCIES.map(currency => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.code} - {currency.name} ({currency.symbol})
+                  </option>
+                ))}
               </select>
             </div>
 

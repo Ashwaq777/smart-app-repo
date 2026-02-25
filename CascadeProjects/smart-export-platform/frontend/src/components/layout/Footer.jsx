@@ -11,16 +11,16 @@ export const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Ship className="w-6 h-6 text-white" />
+                <div className="w-14 h-14 bg-gradient-to-br from-accent-500 via-accent-600 to-accent-700 rounded-xl flex items-center justify-center shadow-xl border-2 border-accent-400/30">
+                  <Ship className="w-7 h-7 text-white drop-shadow-lg" />
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-accent-400 rounded-full flex items-center justify-center">
-                  <Anchor className="w-3 h-3 text-white" />
+                <div className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-gradient-to-br from-accent-400 to-accent-500 rounded-full flex items-center justify-center shadow-lg border-2 border-maritime-navy">
+                  <Anchor className="w-3.5 h-3.5 text-white" />
                 </div>
               </div>
               <div>
-                <h3 className="text-xl font-bold">Smart Export</h3>
-                <p className="text-xs text-gray-400">Global Maritime Trade Platform</p>
+                <h3 className="text-xl font-bold tracking-tight">Smart Export</h3>
+                <p className="text-xs text-gray-400 font-medium">Global Maritime Trade Platform</p>
               </div>
             </div>
             <p className="text-sm text-gray-300 leading-relaxed max-w-md">
