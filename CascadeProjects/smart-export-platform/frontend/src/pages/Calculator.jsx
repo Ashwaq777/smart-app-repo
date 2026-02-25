@@ -157,26 +157,29 @@ function Calculator() {
   }
 
   return (
-    <div className="px-4 py-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-          <div className="mr-3 p-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl shadow-md">
-            <CalcIcon className="h-6 w-6 text-white" />
-          </div>
-          Calculateur de Landed Cost
-        </h1>
-        <p className="mt-2 text-gray-600">
-          Calculez les coûts d'importation complets incluant douane, TVA, taxes parafiscales et frais portuaires
+    <div className="max-w-7xl mx-auto px-6">
+      <div className="text-center mb-12">
+        <h2 className="text-4xl md:text-5xl font-bold text-maritime-navy mb-4">
+          Import Duties Calculator
+        </h2>
+        <div className="w-24 h-1 bg-gradient-to-r from-accent-500 to-accent-600 mx-auto mb-6"></div>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          Calculate complete import costs including customs duties, VAT, parafiscal taxes and port fees
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-6 text-gray-800">Informations du produit</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        {/* Left Column - Form */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 sticky top-24">
+            <h3 className="text-2xl font-bold text-maritime-navy mb-6 flex items-center gap-2">
+              <CalcIcon className="w-6 h-6 text-accent-500" />
+              Product Information
+            </h3>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
                 Catégorie
               </label>
               <select
@@ -184,17 +187,17 @@ function Calculator() {
                 value={formData.categorie}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
               >
-                <option value="">Sélectionnez une catégorie</option>
+                <option value="" className="bg-dark-hover text-white">Sélectionnez une catégorie</option>
                 {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat} value={cat} className="bg-dark-hover text-white">{cat}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
                 Produit
               </label>
               <select
@@ -203,11 +206,11 @@ function Calculator() {
                 onChange={handleInputChange}
                 required
                 disabled={!formData.categorie}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="">Sélectionnez un produit</option>
+                <option value="" className="bg-dark-hover text-white">Sélectionnez un produit</option>
                 {products.map(product => (
-                  <option key={product.id} value={product.codeHs}>
+                  <option key={product.id} value={product.codeHs} className="bg-dark-hover text-white">
                     {product.nomProduit} ({product.codeHs})
                   </option>
                 ))}
@@ -215,7 +218,7 @@ function Calculator() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
                 Valeur CIF (FOB)
               </label>
               <input
@@ -226,13 +229,13 @@ function Calculator() {
                 required
                 step="0.01"
                 min="0.01"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
                 Coût de transport
               </label>
               <input
@@ -243,13 +246,13 @@ function Calculator() {
                 required
                 step="0.01"
                 min="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
                 Assurance
               </label>
               <input
@@ -260,29 +263,29 @@ function Calculator() {
                 required
                 step="0.01"
                 min="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
                 Devise
               </label>
               <select
                 name="currency"
                 value={formData.currency}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
               >
-                <option value="MAD">MAD - Dirham marocain</option>
-                <option value="EUR">EUR - Euro</option>
-                <option value="USD">USD - Dollar américain</option>
+                <option value="MAD" className="bg-dark-hover text-white">MAD - Dirham marocain</option>
+                <option value="EUR" className="bg-dark-hover text-white">EUR - Euro</option>
+                <option value="USD" className="bg-dark-hover text-white">USD - Dollar américain</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
                 Pays de destination
               </label>
               <select
@@ -290,17 +293,17 @@ function Calculator() {
                 value={formData.paysDestination}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
               >
-                <option value="">Sélectionnez un pays</option>
+                <option value="" className="bg-dark-hover text-white">Sélectionnez un pays</option>
                 {countries.map(country => (
-                  <option key={country} value={country}>{country}</option>
+                  <option key={country} value={country} className="bg-dark-hover text-white">{country}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
                 Port de destination (optionnel)
               </label>
               <select
@@ -308,11 +311,11 @@ function Calculator() {
                 value={formData.portId}
                 onChange={handleInputChange}
                 disabled={!formData.paysDestination}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="">Sélectionnez un port</option>
+                <option value="" className="bg-dark-hover text-white">Sélectionnez un port</option>
                 {ports.map(port => (
-                  <option key={port.id} value={port.id}>
+                  <option key={port.id} value={port.id} className="bg-dark-hover text-white">
                     {port.nomPort} ({port.typePort}) - {port.fraisPortuaires} {formData.currency}
                   </option>
                 ))}
@@ -320,42 +323,49 @@ function Calculator() {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
+              <div className="bg-red-50 border border-red-300 rounded-xl p-4 flex items-start">
                 <AlertCircle className="h-5 w-5 text-red-600 mr-2 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-800">{error}</p>
+                <p className="text-sm text-red-700">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white py-4 px-6 rounded-lg font-bold text-base shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
             >
-              {loading ? 'Calcul en cours...' : 'Calculer le Landed Cost'}
+              {loading ? 'Calculating...' : 'Calculate Landed Cost'}
             </button>
           </form>
+          </div>
         </div>
 
-        <div>
+        {/* Right Column - Results */}
+        <div className="lg:col-span-3">
           {result && (
-            <>
+            <div className="space-y-6">
               <CostDashboard result={result} />
               
               <button
                 onClick={handleDownloadPdf}
-                className="mt-4 w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-600 text-white py-4 px-6 rounded-lg font-bold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <Download className="h-5 w-5 mr-2" />
-                Télécharger le PDF
+                <Download className="h-5 w-5" />
+                Download PDF Report
               </button>
-            </>
+            </div>
           )}
           
           {!result && (
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
-              <CalcIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">
-                Remplissez le formulaire pour voir les résultats du calcul
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-12 text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-accent-100 to-accent-200 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <CalcIcon className="h-12 w-12 text-accent-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-maritime-navy mb-3">
+                Ready to Calculate?
+              </h3>
+              <p className="text-gray-600 text-lg">
+                Fill in the form to see your complete import cost breakdown
               </p>
             </div>
           )}

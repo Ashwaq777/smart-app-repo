@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Package, Anchor, FileText, Settings } from 'lucide-react'
+import { Settings, Package, Anchor, FileText, Ship } from 'lucide-react'
 import { Card } from '../components/ui/Card'
 import ProductsManager from '../components/admin/ProductsManager'
 import PortsManager from '../components/admin/PortsManager'
@@ -10,27 +10,27 @@ function Admin() {
 
   const tabs = [
     { id: 'products', name: 'Produits', icon: Package, description: 'Gérer les produits et tarifs' },
-    { id: 'ports', name: 'Ports', icon: Anchor, description: 'Gérer les ports et frais' },
+    { id: 'ports', name: 'Ports', icon: Ship, description: 'Gérer les ports et frais' },
     { id: 'tariffs', name: 'Tarifs Douaniers', icon: FileText, description: 'Consulter les tarifs' },
   ]
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Settings className="h-8 w-8 text-blue-600" />
+    <div className="min-h-screen bg-maritime-cream pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-maritime-navy mb-4 flex items-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl shadow-lg">
+              <Settings className="h-8 w-8 text-white" />
             </div>
             Administration
           </h1>
-          <p className="mt-2 text-gray-600">
-            Gérez les produits, ports et tarifs douaniers de la plateforme
+          <div className="w-24 h-1 bg-gradient-to-r from-accent-500 to-accent-600 mb-6"></div>
+          <p className="text-xl text-gray-600">
+            Manage products, ports and customs tariffs for the platform
           </p>
         </div>
-      </div>
 
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-200">
         <div className="border-b border-gray-200 bg-gray-50 rounded-t-2xl">
           <nav className="flex gap-2 p-2">
             {tabs.map((tab) => {
@@ -40,10 +40,10 @@ function Admin() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
-                    flex items-center gap-3 px-6 py-3 rounded-lg font-medium transition-all duration-200
+                    flex items-center gap-3 px-6 py-4 rounded-xl font-semibold transition-all duration-300
                     ${activeTab === tab.id
-                      ? 'bg-white text-blue-600 shadow-md'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                      ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-lg'
+                      : 'text-gray-600 hover:bg-white hover:text-maritime-navy border border-transparent hover:border-gray-200'
                     }
                   `}
                 >
@@ -51,7 +51,7 @@ function Admin() {
                   <div className="text-left">
                     <div className="text-sm font-semibold">{tab.name}</div>
                     {activeTab === tab.id && (
-                      <div className="text-xs text-gray-500">{tab.description}</div>
+                      <div className="text-xs text-gray-400">{tab.description}</div>
                     )}
                   </div>
                 </button>
@@ -60,13 +60,14 @@ function Admin() {
           </nav>
         </div>
 
-        <div className="p-6">
+        <div className="p-8 bg-white">
           {activeTab === 'products' && <ProductsManager />}
           {activeTab === 'ports' && <PortsManager />}
           {activeTab === 'tariffs' && <TariffsManager />}
         </div>
       </div>
     </div>
+  </div>
   )
 }
 

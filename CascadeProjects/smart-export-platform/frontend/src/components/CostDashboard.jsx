@@ -51,134 +51,156 @@ const CostDashboard = ({ result }) => {
   ]
 
   return (
-    <div className="space-y-10 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Résultats du calcul</h2>
-          <p className="text-base text-gray-500 leading-relaxed">
-            {result.nomProduit} • {result.paysDestination}
-          </p>
+    <div className="space-y-6 animate-fade-in">
+      <div className="bg-gradient-to-r from-maritime-navy to-maritime-deepBlue rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-sm font-semibold text-accent-300 mb-2">TOTAL LANDED COST</h3>
+            <div className="text-5xl font-bold">{formatCurrency(result.coutTotal)}</div>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-accent-300 mb-1">Currency</div>
+            <div className="text-2xl font-bold">{result.currency}</div>
+          </div>
         </div>
-        <Badge variant="primary" className="text-base px-5 py-2.5">
-          {result.currency}
-        </Badge>
+        <div className="flex items-center gap-2 text-sm text-accent-200">
+          <span>{result.nomProduit}</span>
+          <span>•</span>
+          <span>{result.paysDestination}</span>
+          {result.nomPort && (
+            <>
+              <span>•</span>
+              <span>{result.nomPort}</span>
+            </>
+          )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((kpi, index) => {
           const Icon = kpi.icon
           return (
-            <Card key={index} hover className="relative overflow-hidden">
-              <div className={`absolute top-0 right-0 w-32 h-32 ${kpi.bgColor} rounded-full -mr-16 -mt-16 opacity-50`} />
-              <CardContent className="relative">
-                <div className="flex items-center justify-between mb-6">
-                  <div className={`p-3.5 rounded-xl ${kpi.bgColor}`}>
-                    <Icon className={`w-6 h-6 ${kpi.color}`} />
-                  </div>
-                  {kpi.percentage !== undefined && (
-                    <Badge variant="info" className="text-xs">
-                      {kpi.percentage}%
-                    </Badge>
-                  )}
+            <div
+              key={index}
+              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-accent-500 transition-all duration-300 hover:shadow-lg group"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 rounded-lg bg-accent-100 group-hover:bg-accent-200 transition-colors">
+                  <Icon className="w-5 h-5 text-accent-600" />
                 </div>
-                <p className="text-sm text-gray-500 mb-2 leading-relaxed">{kpi.title}</p>
-                <p className="text-2xl font-bold text-gray-900 tracking-tight">
-                  {formatCurrency(kpi.value, kpi.currency)}
-                </p>
-              </CardContent>
-            </Card>
+                {kpi.percentage !== undefined && (
+                  <span className="text-xs font-semibold text-gray-500">
+                    {kpi.percentage}%
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mb-1 font-semibold uppercase tracking-wide">{kpi.title}</p>
+              <p className="text-2xl font-bold text-maritime-navy">
+                {formatCurrency(kpi.value, kpi.currency)}
+              </p>
+            </div>
           )
         })}
       </div>
 
-      <Card className="bg-gradient-to-br from-primary-500 to-accent-600 text-white border-0 shadow-xl">
-        <CardContent className="py-10">
-          <div className="flex items-center justify-between">
-            <div className="space-y-3">
-              <p className="text-primary-100 text-sm mb-2 leading-relaxed">Coût Total Landed Cost</p>
-              <p className="text-5xl font-bold tracking-tight">{formatCurrency(result.coutTotal)}</p>
-              {result.nomPort && (
-                <p className="text-primary-100 text-sm mt-3 leading-relaxed">
-                  Port: {result.nomPort}
-                </p>
-              )}
-            </div>
-            <div className="text-right space-y-3">
-              {result.coutTotalEur && result.currency !== 'EUR' && (
-                <div>
-                  <p className="text-primary-100 text-xs leading-relaxed">Équivalent EUR</p>
-                  <p className="text-xl font-semibold tracking-tight">{formatCurrency(result.coutTotalEur, 'EUR')}</p>
-                </div>
-              )}
-              {result.coutTotalUsd && result.currency !== 'USD' && (
-                <div>
-                  <p className="text-primary-100 text-xs leading-relaxed">Équivalent USD</p>
-                  <p className="text-xl font-semibold tracking-tight">{formatCurrency(result.coutTotalUsd, 'USD')}</p>
-                </div>
-              )}
-            </div>
+      <div className="bg-gradient-to-br from-maritime-navy to-maritime-ocean rounded-2xl p-8 shadow-xl border border-maritime-ocean">
+        <div className="flex items-center justify-between">
+          <div className="space-y-3">
+            <p className="text-primary-100 text-sm mb-2 leading-relaxed">Coût Total Landed Cost</p>
+            <p className="text-5xl font-bold tracking-tight text-white">{formatCurrency(result.coutTotal)}</p>
+            {result.nomPort && (
+              <p className="text-primary-100 text-sm mt-3 leading-relaxed">
+                Port: {result.nomPort}
+              </p>
+            )}
           </div>
-        </CardContent>
-      </Card>
+          <div className="text-right space-y-3">
+            {result.coutTotalEur && result.currency !== 'EUR' && (
+              <div>
+                <p className="text-primary-100 text-xs leading-relaxed">Équivalent EUR</p>
+                <p className="text-xl font-semibold tracking-tight text-white">{formatCurrency(result.coutTotalEur, 'EUR')}</p>
+              </div>
+            )}
+            {result.coutTotalUsd && result.currency !== 'USD' && (
+              <div className="bg-white p-4 rounded-lg shadow-md">
+                <p className="text-primary-100 text-xs leading-relaxed">Équivalent USD</p>
+                <p className="text-xl font-semibold tracking-tight text-maritime-navy">{formatCurrency(result.coutTotalUsd, 'USD')}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+        <h3 className="text-2xl font-bold text-maritime-navy mb-6">Cost Breakdown</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b-2 border-gray-200 bg-gray-50">
+                  <th className="text-left py-4 px-4 text-sm font-bold text-gray-700 uppercase tracking-wide">Item</th>
+                  <th className="text-right py-4 px-4 text-sm font-bold text-gray-700 uppercase tracking-wide">Amount</th>
+                  <th className="text-right py-4 px-4 text-sm font-bold text-gray-700 uppercase tracking-wide">Rate</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-blue-200">
+                <tr className="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                  <td className="py-4 px-4 text-sm font-medium text-gray-900">Valeur FOB</td>
+                  <td className="py-4 px-4 text-sm text-right font-bold text-maritime-navy">{formatCurrency(result.valeurFob, result.currency)}</td>
+                  <td className="py-3 px-4 text-sm text-right text-gray-600">-</td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                  <td className="py-4 px-4 text-sm font-medium text-gray-900">Transport</td>
+                  <td className="py-4 px-4 text-sm text-right font-bold text-maritime-navy">{formatCurrency(result.coutTransport, result.currency)}</td>
+                  <td className="py-3 px-4 text-sm text-right text-gray-600">-</td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                  <td className="py-4 px-4 text-sm font-medium text-gray-900">Assurance</td>
+                  <td className="py-4 px-4 text-sm text-right font-bold text-maritime-navy">{formatCurrency(result.assurance, result.currency)}</td>
+                  <td className="py-3 px-4 text-sm text-right text-gray-600">-</td>
+                </tr>
+                <tr className="bg-accent-50 font-semibold border-b border-accent-200">
+                  <td className="py-4 px-4 text-sm font-bold text-maritime-navy">CIF Value</td>
+                  <td className="py-4 px-4 text-sm text-right font-bold text-maritime-navy">{formatCurrency(result.valeurCaf, result.currency)}</td>
+                  <td className="py-4 px-4 text-sm text-right text-gray-600">-</td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                  <td className="py-4 px-4 text-sm font-medium text-gray-900">Droits de douane</td>
+                  <td className="py-4 px-4 text-sm text-right font-bold text-maritime-navy">{formatCurrency(result.montantDouane, result.currency)}</td>
+                  <td className="py-3 px-4 text-sm text-right text-gray-600">{result.tauxDouane}%</td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                  <td className="py-4 px-4 text-sm font-medium text-gray-900">TVA</td>
+                  <td className="py-4 px-4 text-sm text-right font-bold text-maritime-navy">{formatCurrency(result.montantTva, result.currency)}</td>
+                  <td className="py-3 px-4 text-sm text-right text-gray-600">{result.tauxTva}%</td>
+                </tr>
+                {result.montantTaxeParafiscale > 0 && (
+                  <tr className="hover:bg-blue-50 transition-colors">
+                    <td className="py-3 px-4 text-sm text-gray-700">Taxe parafiscale</td>
+                    <td className="py-4 px-4 text-sm text-right font-bold text-maritime-navy">{formatCurrency(result.montantTaxeParafiscale, result.currency)}</td>
+                    <td className="py-3 px-4 text-sm text-right text-gray-600">{result.taxeParafiscale}%</td>
+                  </tr>
+                )}
+                {result.fraisPortuaires > 0 && (
+                  <tr className="hover:bg-blue-50 transition-colors">
+                    <td className="py-3 px-4 text-sm text-gray-700">Frais portuaires</td>
+                    <td className="py-4 px-4 text-sm text-right font-bold text-maritime-navy">{formatCurrency(result.fraisPortuaires, result.currency)}</td>
+                    <td className="py-3 px-4 text-sm text-right text-gray-600">-</td>
+                  </tr>
+                )}
+                <tr className="bg-gradient-to-r from-accent-500 to-accent-600 text-white font-bold">
+                  <td className="py-5 px-4 text-base font-bold">TOTAL LANDED COST</td>
+                  <td className="py-5 px-4 text-base text-right font-bold">{formatCurrency(result.coutTotal, result.currency)}</td>
+                  <td className="py-5 px-4 text-base text-right">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Détail des coûts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <CostLine label="Valeur FOB" value={result.valeurFob} currency={result.currency} />
-              <CostLine label="Transport" value={result.coutTransport} currency={result.currency} />
-              <CostLine label="Assurance" value={result.assurance} currency={result.currency} />
-              <div className="border-t border-gray-200 pt-3">
-                <CostLine 
-                  label="Valeur CAF (CIF)" 
-                  value={result.valeurCaf} 
-                  currency={result.currency}
-                  bold 
-                />
-              </div>
-              <CostLine 
-                label={`Droits de douane (${result.tauxDouane}%)`} 
-                value={result.montantDouane} 
-                currency={result.currency} 
-              />
-              <CostLine 
-                label={`TVA (${result.tauxTva}%)`} 
-                value={result.montantTva} 
-                currency={result.currency} 
-              />
-              {result.montantTaxeParafiscale > 0 && (
-                <CostLine 
-                  label={`Taxe parafiscale (${result.taxeParafiscale}%)`} 
-                  value={result.montantTaxeParafiscale} 
-                  currency={result.currency} 
-                />
-              )}
-              {result.fraisPortuaires > 0 && (
-                <CostLine 
-                  label="Frais portuaires" 
-                  value={result.fraisPortuaires} 
-                  currency={result.currency} 
-                />
-              )}
-              <div className="border-t-2 border-gray-300 pt-3">
-                <CostLine 
-                  label="TOTAL LANDED COST" 
-                  value={result.coutTotal} 
-                  currency={result.currency}
-                  bold
-                  large
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Informations complémentaires</CardTitle>
+            <CardTitle className="text-xl text-gray-900">Informations complémentaires</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <InfoItem 
@@ -204,15 +226,15 @@ const CostDashboard = ({ result }) => {
               value={result.currency} 
             />
             
-            <div className="pt-4 border-t border-gray-200">
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-xs text-yellow-800 font-medium mb-1">
+            <div className="pt-3 border-t border-dark-border">
+              <div className="bg-amber-50 border border-amber-300 rounded-xl p-4">
+                <p className="text-xs text-amber-700 font-semibold mb-1">
                   ⚠️ Disclaimer
                 </p>
-                <p className="text-xs text-yellow-700">
+                <p className="text-xs text-amber-600">
                   {result.disclaimer}
                 </p>
-                <p className="text-xs text-yellow-600 mt-2">
+                <p className="text-xs text-amber-700 mt-2">
                   Source taux de change: {result.exchangeRateSource}
                 </p>
               </div>
@@ -234,11 +256,11 @@ const CostLine = ({ label, value, currency, bold = false, large = false }) => {
   }
 
   return (
-    <div className="flex justify-between items-center">
-      <span className={`text-gray-700 ${bold ? 'font-semibold' : ''} ${large ? 'text-lg' : 'text-sm'}`}>
+    <div className="flex justify-between items-center py-1">
+      <span className={`text-gray-600 ${bold ? 'font-semibold' : ''} ${large ? 'text-base' : 'text-sm'}`}>
         {label}
       </span>
-      <span className={`text-gray-900 ${bold ? 'font-bold' : 'font-medium'} ${large ? 'text-xl' : 'text-sm'}`}>
+      <span className={`text-maritime-navy ${bold ? 'font-bold' : 'font-medium'} ${large ? 'text-lg' : 'text-sm'}`}>
         {formatCurrency(value, currency)}
       </span>
     </div>
@@ -248,12 +270,12 @@ const CostLine = ({ label, value, currency, bold = false, large = false }) => {
 const InfoItem = ({ icon: Icon, label, value }) => {
   return (
     <div className="flex items-start gap-3">
-      <div className="p-2 bg-gray-100 rounded-lg">
-        <Icon className="w-4 h-4 text-gray-600" />
+      <div className="p-2 bg-gradient-to-br from-maritime-ocean/20 to-maritime-wave/20 border border-maritime-ocean/30 rounded-lg">
+        <Icon className="w-4 h-4 text-maritime-ocean" />
       </div>
       <div className="flex-1">
-        <p className="text-xs text-gray-500">{label}</p>
-        <p className="text-sm font-medium text-gray-900">{value}</p>
+        <p className="text-xs text-gray-500 font-medium">{label}</p>
+        <p className="text-sm font-semibold text-maritime-navy">{value}</p>
       </div>
     </div>
   )

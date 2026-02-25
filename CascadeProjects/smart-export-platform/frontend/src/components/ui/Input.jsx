@@ -11,7 +11,7 @@ export const Input = ({
   return (
     <div className={`${containerClassName}`}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-3 leading-relaxed">
+        <label className="block text-sm font-semibold text-gray-300 mb-3 leading-relaxed">
           {label}
         </label>
       )}
@@ -23,21 +23,21 @@ export const Input = ({
         )}
         <input
           className={`
-            w-full rounded-xl border border-gray-200
+            w-full rounded-xl border border-dark-border
             ${Icon ? 'pl-12 pr-4' : 'px-4'} py-3.5
-            text-gray-900 placeholder-gray-400
-            bg-white
-            focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400
-            hover:border-gray-300
+            text-white placeholder-gray-500
+            bg-dark-hover
+            focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 focus:shadow-lg focus:shadow-primary-500/20
+            hover:border-gray-600
             transition-all duration-300 ease-out
-            ${error ? 'border-red-300 focus:ring-red-500/20 focus:border-red-400' : ''}
+            ${error ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500' : ''}
             ${className}
           `}
           {...props}
         />
       </div>
       {error && (
-        <p className="mt-2 text-sm text-red-600 leading-relaxed">{error}</p>
+        <p className="mt-2 text-sm text-red-400 leading-relaxed">{error}</p>
       )}
     </div>
   )

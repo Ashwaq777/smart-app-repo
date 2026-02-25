@@ -1,16 +1,17 @@
 import React from 'react'
-import { Sidebar } from './Sidebar'
+import { Header } from './Header'
+import { Footer } from './Footer'
 
-export const MainLayout = ({ children }) => {
+export const MainLayout = ({ children, showHeader = true, showFooter = true }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/50">
-      <Sidebar />
+    <div className="min-h-screen bg-maritime-cream">
+      {showHeader && <Header />}
       
-      <main className="lg:pl-72 transition-all duration-500 ease-out">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
-          {children}
-        </div>
+      <main className="min-h-screen">
+        {children}
       </main>
+
+      {showFooter && <Footer />}
     </div>
   )
 }

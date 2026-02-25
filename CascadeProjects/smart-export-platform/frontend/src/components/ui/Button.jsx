@@ -1,11 +1,11 @@
 import React from 'react'
 
 const variants = {
-  primary: 'bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white shadow-sm hover:shadow-md border border-primary-700/20',
-  secondary: 'bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 hover:border-gray-300',
-  danger: 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-sm hover:shadow-md border border-red-700/20',
-  success: 'bg-gradient-to-r from-success-600 to-success-500 hover:from-success-700 hover:to-success-600 text-white shadow-sm hover:shadow-md border border-success-700/20',
-  outline: 'border border-primary-300 text-primary-700 hover:bg-primary-50 hover:border-primary-400',
+  primary: 'bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 hover:from-primary-500 hover:to-accent-600 text-white shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 border border-primary-500/30',
+  secondary: 'bg-dark-hover hover:bg-dark-border text-gray-300 border border-dark-border hover:border-gray-600 hover:text-white',
+  danger: 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white shadow-lg shadow-red-500/30 hover:shadow-red-500/50 border border-red-500/30',
+  success: 'bg-gradient-to-r from-success-600 to-success-500 hover:from-success-500 hover:to-success-600 text-white shadow-lg shadow-success-500/30 hover:shadow-success-500/50 border border-success-500/30',
+  outline: 'border-2 border-primary-500 text-primary-400 hover:bg-primary-500/10 hover:border-primary-400 hover:text-primary-300',
 }
 
 const sizes = {

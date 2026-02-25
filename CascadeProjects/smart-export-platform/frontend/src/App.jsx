@@ -2,19 +2,25 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastProvider } from './components/ui/Toast'
 import { MainLayout } from './components/layout/MainLayout'
-import Calculator from './pages/Calculator'
+import Home from './pages/Home'
 import Admin from './pages/Admin'
 
 function App() {
   return (
     <Router>
       <ToastProvider>
-        <MainLayout>
-          <Routes>
-            <Route path="/" element={<Calculator />} />
-            <Route path="/admin" element={<Admin />} />
-          </Routes>
-        </MainLayout>
+        <Routes>
+          <Route path="/" element={
+            <MainLayout>
+              <Home />
+            </MainLayout>
+          } />
+          <Route path="/admin" element={
+            <MainLayout showFooter={false}>
+              <Admin />
+            </MainLayout>
+          } />
+        </Routes>
       </ToastProvider>
     </Router>
   )
