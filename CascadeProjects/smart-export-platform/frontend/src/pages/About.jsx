@@ -91,24 +91,24 @@ function About() {
         </div>
 
         {/* Stats Section */}
-        <div className="bg-gradient-to-br from-maritime-navy to-maritime-deepBlue rounded-3xl p-12 text-white shadow-2xl">
-          <h2 className="text-3xl font-bold mb-8 text-center">By the Numbers</h2>
+        <div className="bg-white rounded-3xl p-12 shadow-2xl border-2 border-gray-200">
+          <h2 className="text-3xl font-bold mb-8 text-center text-gray-900">By the Numbers</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">150+</div>
-              <div className="text-accent-300 font-medium">Countries Covered</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">150+</div>
+              <div className="text-gray-700 font-medium">Countries Covered</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">10K+</div>
-              <div className="text-accent-300 font-medium">Products Database</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">10K+</div>
+              <div className="text-gray-700 font-medium">Products Database</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">500+</div>
-              <div className="text-accent-300 font-medium">Maritime Ports</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">500+</div>
+              <div className="text-gray-700 font-medium">Maritime Ports</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">99%</div>
-              <div className="text-accent-300 font-medium">Accuracy Rate</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">99%</div>
+              <div className="text-gray-700 font-medium">Accuracy Rate</div>
             </div>
           </div>
         </div>
