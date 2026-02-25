@@ -46,17 +46,12 @@ export const HeroSection = () => {
                 Calculate Now
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button
-                onClick={() => {
-                  const aboutSection = document.getElementById('about')
-                  if (aboutSection) {
-                    aboutSection.scrollIntoView({ behavior: 'smooth' })
-                  }
-                }}
-                className="border-2 border-maritime-navy text-maritime-navy px-8 py-4 rounded-xl font-bold text-lg hover:bg-maritime-navy hover:text-white transition-all duration-300"
+              <a
+                href="/about"
+                className="border-2 border-maritime-navy text-maritime-navy px-8 py-4 rounded-xl font-bold text-lg hover:bg-maritime-navy hover:text-white transition-all duration-300 inline-block text-center"
               >
                 Learn More
-              </button>
+              </a>
             </div>
 
             {/* Stats */}
