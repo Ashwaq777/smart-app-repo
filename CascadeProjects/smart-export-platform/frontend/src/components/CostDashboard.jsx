@@ -197,6 +197,103 @@ const CostDashboard = ({ result }) => {
           </div>
       </div>
 
+      {/* Profitability Analysis */}
+      {result.margeNette !== null && result.margeNette !== undefined && (
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <h3 className="text-2xl font-bold text-maritime-navy mb-6">Analyse de Rentabilité</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+              <p className="text-sm text-blue-700 font-semibold mb-2">Prix de Vente Prévisionnel</p>
+              <p className="text-3xl font-bold text-blue-900">{formatCurrency(result.prixVentePrevisionnel)}</p>
+            </div>
+            <div className={`rounded-xl p-6 border-2 ${result.margeNette >= 0 ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-300' : 'bg-gradient-to-br from-red-50 to-red-100 border-red-300'}`}>
+              <p className={`text-sm font-semibold mb-2 ${result.margeNette >= 0 ? 'text-green-700' : 'text-red-700'}`}>Marge Nette</p>
+              <p className={`text-3xl font-bold ${result.margeNette >= 0 ? 'text-green-900' : 'text-red-900'}`}>
+                {formatCurrency(result.margeNette)}
+              </p>
+              {result.margePourcentage !== null && (
+                <p className={`text-sm font-semibold mt-2 ${result.margeNette >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                  {result.margePourcentage.toFixed(2)}%
+                </p>
+              )}
+            </div>
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+              <p className="text-sm text-purple-700 font-semibold mb-2">Indicateur</p>
+              <div className="flex items-center gap-2">
+                <span className={`inline-block px-4 py-2 rounded-full text-sm font-bold ${
+                  result.indicateurRentabilite === 'POSITIF' ? 'bg-green-500 text-white' :
+                  result.indicateurRentabilite === 'NEGATIF' ? 'bg-red-500 text-white' :
+                  'bg-gray-500 text-white'
+                }`}>
+                  {result.indicateurRentabilite}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SIV Alert */}
+      {result.alerteSiv && (
+        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-2 border-orange-300 rounded-2xl p-8 shadow-lg">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-orange-500 rounded-full">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-orange-900 mb-2">⚠️ Alerte Sécurité Douanière (SIV)</h3>
+              <p className="text-orange-800 mb-4">{result.messageSiv}</p>
+              {result.prixEntreeSivMin && (
+                <div className="grid grid-cols-2 gap-4 bg-white rounded-lg p-4 border border-orange-200">
+                  <div>
+                    <p className="text-xs text-gray-600 mb-1">Valeur CAF actuelle</p>
+                    <p className="text-lg font-bold text-orange-900">{formatCurrency(result.valeurCaf)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 mb-1">Prix d'entrée SIV minimum</p>
+                    <p className="text-lg font-bold text-green-700">{formatCurrency(result.prixEntreeSivMin)}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Currency Sensitivity */}
+      {(result.impactDevise2PourcentPlus || result.impactDevise2PourcentMoins) && (
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <h3 className="text-2xl font-bold text-maritime-navy mb-4">Analyse de Sensibilité Devises</h3>
+          <p className="text-sm text-gray-600 mb-6">Impact d'une variation de ±2% du taux de change sur le coût total</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {result.impactDevise2PourcentPlus && (
+              <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 border border-red-200">
+                <p className="text-sm text-red-700 font-semibold mb-2">Variation +2%</p>
+                <p className="text-2xl font-bold text-red-900">
+                  +{formatCurrency(result.impactDevise2PourcentPlus)}
+                </p>
+                <p className="text-sm text-red-700 mt-2">
+                  Nouveau total: {formatCurrency(result.coutTotal + result.impactDevise2PourcentPlus)}
+                </p>
+              </div>
+            )}
+            {result.impactDevise2PourcentMoins && (
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                <p className="text-sm text-green-700 font-semibold mb-2">Variation -2%</p>
+                <p className="text-2xl font-bold text-green-900">
+                  {formatCurrency(result.impactDevise2PourcentMoins)}
+                </p>
+                <p className="text-sm text-green-700 mt-2">
+                  Nouveau total: {formatCurrency(result.coutTotal + result.impactDevise2PourcentMoins)}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>

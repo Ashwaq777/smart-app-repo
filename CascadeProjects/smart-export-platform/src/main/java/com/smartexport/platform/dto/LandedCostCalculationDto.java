@@ -35,4 +35,20 @@ public class LandedCostCalculationDto {
     private String currency;
     
     private Long portId;
+    
+    // Legal identifiers
+    private String nomEntreprise;
+    private String registreCommerce;
+    private String ice;
+    
+    // Incoterm
+    private String incoterm; // FOB, CIF, etc.
+    
+    // Profitability
+    private BigDecimal prixVentePrevisionnel;
+    
+    // Logistics details
+    private BigDecimal poidsNet;
+    private BigDecimal poidsBrut;
+    private String typeUnite; // ex: conteneur 40'
 }

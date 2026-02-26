@@ -48,4 +48,35 @@ public class LandedCostResultDto {
     private String disclaimer;
     private String exchangeRateSource;
     private LocalDateTime calculationDate;
+    
+    // Legal identifiers
+    private String nomEntreprise;
+    private String registreCommerce;
+    private String ice;
+    
+    // Unique simulation ID
+    private String simulationId;
+    
+    // Profitability indicator
+    private BigDecimal prixVentePrevisionnel;
+    private BigDecimal margeNette;
+    private BigDecimal margePourcentage;
+    private String indicateurRentabilite; // POSITIF, NEGATIF, NEUTRE
+    
+    // SIV Alert
+    private Boolean alerteSiv;
+    private String messageSiv;
+    private BigDecimal prixEntreeSivMin;
+    
+    // Currency sensitivity analysis
+    private BigDecimal impactDevise2PourcentPlus;
+    private BigDecimal impactDevise2PourcentMoins;
+    
+    // Logistics details
+    private BigDecimal poidsNet;
+    private BigDecimal poidsBrut;
+    private String typeUnite;
+    
+    // Incoterm
+    private String incoterm;
 }

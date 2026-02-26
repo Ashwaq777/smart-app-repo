@@ -72,9 +72,16 @@ public class ExchangeRateService {
     
     public BigDecimal getRate(String fromCurrency, String toCurrency) {
         ExchangeRateResponse rates = fetchRates(fromCurrency);
+        
+        if (rates == null || rates.getConversionRates() == null) {
+            log.error("Exchange rates not available for {}", fromCurrency);
+            throw new RuntimeException("Taux de change non disponible pour " + fromCurrency);
+        }
+        
         BigDecimal rate = rates.getConversionRates().get(toCurrency);
         
         if (rate == null) {
+            log.error("Exchange rate not found for {} to {}", fromCurrency, toCurrency);
             throw new RuntimeException("Taux de change non disponible pour " + toCurrency);
         }
         

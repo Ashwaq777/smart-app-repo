@@ -18,7 +18,19 @@ function Calculator() {
     valeurFob: '',
     coutTransport: '',
     assurance: '',
-    currency: 'MAD'
+    currency: 'MAD',
+    // Legal identifiers
+    nomEntreprise: '',
+    registreCommerce: '',
+    ice: '',
+    // Incoterm
+    incoterm: 'CIF',
+    // Profitability
+    prixVentePrevisionnel: '',
+    // Logistics
+    poidsNet: '',
+    poidsBrut: '',
+    typeUnite: ''
   })
   
   const [result, setResult] = useState(null)
@@ -117,7 +129,15 @@ function Calculator() {
         coutTransport: parseFloat(formData.coutTransport),
         assurance: parseFloat(formData.assurance),
         currency: formData.currency,
-        portId: formData.portId ? parseInt(formData.portId) : null
+        portId: formData.portId ? parseInt(formData.portId) : null,
+        nomEntreprise: formData.nomEntreprise || null,
+        registreCommerce: formData.registreCommerce || null,
+        ice: formData.ice || null,
+        incoterm: formData.incoterm || 'CIF',
+        prixVentePrevisionnel: formData.prixVentePrevisionnel ? parseFloat(formData.prixVentePrevisionnel) : null,
+        poidsNet: formData.poidsNet ? parseFloat(formData.poidsNet) : null,
+        poidsBrut: formData.poidsBrut ? parseFloat(formData.poidsBrut) : null,
+        typeUnite: formData.typeUnite || null
       }
       
       const response = await calculationService.calculateLandedCost(calculationData)
@@ -139,7 +159,15 @@ function Calculator() {
         coutTransport: parseFloat(formData.coutTransport),
         assurance: parseFloat(formData.assurance),
         currency: formData.currency,
-        portId: formData.portId ? parseInt(formData.portId) : null
+        portId: formData.portId ? parseInt(formData.portId) : null,
+        nomEntreprise: formData.nomEntreprise || null,
+        registreCommerce: formData.registreCommerce || null,
+        ice: formData.ice || null,
+        incoterm: formData.incoterm || 'CIF',
+        prixVentePrevisionnel: formData.prixVentePrevisionnel ? parseFloat(formData.prixVentePrevisionnel) : null,
+        poidsNet: formData.poidsNet ? parseFloat(formData.poidsNet) : null,
+        poidsBrut: formData.poidsBrut ? parseFloat(formData.poidsBrut) : null,
+        typeUnite: formData.typeUnite || null
       }
       
       const pdfBlob = await pdfService.generateLandedCostPdf(calculationData)
@@ -323,6 +351,113 @@ function Calculator() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Legal Identifiers */}
+            <div className="border-t-2 border-gray-200 pt-4 mt-4">
+              <h4 className="text-sm font-bold text-maritime-navy mb-3">Informations Légales (optionnel)</h4>
+              
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  name="nomEntreprise"
+                  value={formData.nomEntreprise}
+                  onChange={handleInputChange}
+                  placeholder="Nom Entreprise"
+                  className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
+                />
+                
+                <input
+                  type="text"
+                  name="registreCommerce"
+                  value={formData.registreCommerce}
+                  onChange={handleInputChange}
+                  placeholder="Registre Commerce (RC)"
+                  className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
+                />
+                
+                <input
+                  type="text"
+                  name="ice"
+                  value={formData.ice}
+                  onChange={handleInputChange}
+                  placeholder="ICE"
+                  className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
+                />
+              </div>
+            </div>
+
+            {/* Incoterm */}
+            <div>
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
+                Incoterm
+              </label>
+              <select
+                name="incoterm"
+                value={formData.incoterm}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
+              >
+                <option value="FOB">FOB (Free On Board)</option>
+                <option value="CIF">CIF (Cost, Insurance & Freight)</option>
+                <option value="EXW">EXW (Ex Works)</option>
+                <option value="DDP">DDP (Delivered Duty Paid)</option>
+              </select>
+            </div>
+
+            {/* Profitability */}
+            <div>
+              <label className="block text-sm font-semibold text-maritime-navy mb-2">
+                Prix de vente prévisionnel (optionnel)
+              </label>
+              <input
+                type="number"
+                name="prixVentePrevisionnel"
+                value={formData.prixVentePrevisionnel}
+                onChange={handleInputChange}
+                step="0.01"
+                min="0"
+                placeholder="Pour analyse de rentabilité"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
+              />
+            </div>
+
+            {/* Logistics Details */}
+            <div className="border-t-2 border-gray-200 pt-4 mt-4">
+              <h4 className="text-sm font-bold text-maritime-navy mb-3">Détails Logistiques (optionnel)</h4>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="number"
+                  name="poidsNet"
+                  value={formData.poidsNet}
+                  onChange={handleInputChange}
+                  step="0.01"
+                  min="0"
+                  placeholder="Poids Net (kg)"
+                  className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
+                />
+                
+                <input
+                  type="number"
+                  name="poidsBrut"
+                  value={formData.poidsBrut}
+                  onChange={handleInputChange}
+                  step="0.01"
+                  min="0"
+                  placeholder="Poids Brut (kg)"
+                  className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
+                />
+              </div>
+              
+              <input
+                type="text"
+                name="typeUnite"
+                value={formData.typeUnite}
+                onChange={handleInputChange}
+                placeholder="Type Unité (ex: conteneur 40')"
+                className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200 mt-3"
+              />
             </div>
 
             {error && (
