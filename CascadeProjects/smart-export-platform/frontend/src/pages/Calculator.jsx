@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Calculator as CalcIcon, Download, AlertCircle } from 'lucide-react'
 import { tarifService, portService, calculationService, pdfService } from '../services/api'
+import { countriesService } from '../services/countriesApi'
+import { worldPortsService } from '../services/worldPortsApi'
+import { agriculturalProductsService } from '../services/agriculturalProductsApi'
 import CostDashboard from '../components/CostDashboard'
 import { CURRENCIES } from '../utils/currencyConverter'
 
@@ -8,7 +11,9 @@ function Calculator() {
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
   const [countries, setCountries] = useState([])
+  const [countriesData, setCountriesData] = useState([]) // Pour drapeaux et devises - affichage uniquement
   const [ports, setPorts] = useState([])
+  const [portMessage, setPortMessage] = useState(null) // Message pour pays enclavés
   
   const [formData, setFormData] = useState({
     categorie: '',
@@ -56,17 +61,34 @@ function Calculator() {
 
   const loadCategories = async () => {
     try {
-      const response = await tarifService.getCategories()
-      setCategories(response.data)
+      // Charger les catégories depuis le service agricole (Fruits, Légumes UNIQUEMENT)
+      const agriculturalCategories = agriculturalProductsService.getCategories()
+      setCategories(agriculturalCategories)
     } catch (err) {
       console.error('Error loading categories:', err)
+      // Fallback vers backend si erreur
+      try {
+        const response = await tarifService.getCategories()
+        setCategories(response.data)
+      } catch (backendErr) {
+        console.error('Error loading backend categories:', backendErr)
+      }
     }
   }
 
   const loadCountries = async () => {
     try {
+      // Charger les pays depuis le backend (DONNÉES DE CALCUL - NE PAS MODIFIER)
       const response = await tarifService.getCountries()
       setCountries(response.data)
+      
+      // Enrichir avec drapeaux depuis API externe (AFFICHAGE UNIQUEMENT)
+      try {
+        const countriesWithFlags = await countriesService.getAll()
+        setCountriesData(countriesWithFlags)
+      } catch (apiErr) {
+        console.log('Could not load country flags, continuing without them')
+      }
     } catch (err) {
       console.error('Error loading countries:', err)
     }
@@ -74,31 +96,81 @@ function Calculator() {
 
   const loadProductsByCategory = async (category) => {
     try {
-      const response = await tarifService.getProductsByCategory(category)
-      // Filtrer pour ne garder qu'un seul produit par code HS
-      const uniqueProducts = response.data.reduce((acc, product) => {
-        if (!acc.find(p => p.codeHs === product.codeHs)) {
-          acc.push(product)
-        }
-        return acc
-      }, [])
-      setProducts(uniqueProducts)
+      // Charger les produits agricoles depuis le service (Bananes, Tomates, etc.)
+      const agriculturalProducts = agriculturalProductsService.getProductsByCategory(category)
+      
+      // Formater pour compatibilité avec le backend
+      const formattedProducts = agriculturalProducts.map(product => ({
+        id: product.id,
+        codeHs: product.codeHs,
+        nomProduit: product.nom,
+        categorie: product.categorie,
+        description: product.description
+      }))
+      
+      setProducts(formattedProducts)
     } catch (err) {
-      console.error('Error loading products:', err)
+      console.error('Error loading agricultural products:', err)
+      // Fallback vers backend si erreur
+      try {
+        const response = await tarifService.getProductsByCategory(category)
+        const uniqueProducts = response.data.reduce((acc, product) => {
+          if (!acc.find(p => p.codeHs === product.codeHs)) {
+            acc.push(product)
+          }
+          return acc
+        }, [])
+        setProducts(uniqueProducts)
+      } catch (backendErr) {
+        console.error('Error loading backend products:', backendErr)
+      }
     }
   }
 
   const loadPortsByCountry = async (country) => {
     try {
-      const response = await portService.getByCountry(country)
-      setPorts(response.data)
+      // Récupérer les données du pays pour vérifier s'il est enclavé
+      const countryData = countriesData.find(c => c.name === country)
+      
+      // Charger les ports depuis le service mondial avec couverture 100%
+      const portsResult = await worldPortsService.getPortsByCountry(country, countryData)
+      
+      if (portsResult.hasPorts) {
+        // Formater pour compatibilité avec le backend
+        const formattedPorts = portsResult.ports.map((port, index) => ({
+          id: `${country}-${index}`,
+          nom: port.name,
+          nomPort: port.name,
+          ville: port.city,
+          pays: country,
+          typePort: 'Maritime',
+          capacity: port.capacity,
+          isGeneric: port.isGeneric || false
+        }))
+        
+        setPorts(formattedPorts)
+        setPortMessage(portsResult.message)
+      } else {
+        // Pays enclavé - pas de ports
+        setPorts([])
+        setPortMessage(portsResult.message)
+      }
     } catch (err) {
-      console.error('Error loading ports:', err)
-      setPorts([])
+      console.error('Error loading ports from API:', err)
+      // Fallback vers backend si erreur
+      try {
+        const response = await portService.getByCountry(country)
+        setPorts(response.data)
+        setPortMessage(null)
+      } catch (backendErr) {
+        console.error('Error loading backend ports:', backendErr)
+        setPorts([])
+        setPortMessage('Impossible de charger les ports pour ce pays')
+      }
     }
   }
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
@@ -113,6 +185,19 @@ function Calculator() {
     if (name === 'paysDestination') {
       setFormData(prev => ({ ...prev, portId: '' }))
       setPorts([])
+      
+      // Charger automatiquement la devise du pays sélectionné
+      try {
+        const countryData = countriesData.find(c => c.name === value)
+        if (countryData && countryData.currency) {
+          setFormData(prev => ({
+            ...prev,
+            currency: countryData.currency.code
+          }))
+        }
+      } catch (err) {
+        console.log('Could not load country currency automatically')
+      }
     }
   }
 
@@ -328,7 +413,9 @@ function Calculator() {
               >
                 <option value="" className="bg-dark-hover text-white">Sélectionnez un pays</option>
                 {countries.map(country => (
-                  <option key={country} value={country} className="bg-dark-hover text-white">{country}</option>
+                  <option key={country} value={country} className="bg-dark-hover text-white">
+                    {country}
+                  </option>
                 ))}
               </select>
             </div>
@@ -341,16 +428,23 @@ function Calculator() {
                 name="portId"
                 value={formData.portId}
                 onChange={handleInputChange}
-                disabled={!formData.paysDestination}
+                disabled={!formData.paysDestination || ports.length === 0}
                 className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="" className="bg-dark-hover text-white">Sélectionnez un port</option>
+                <option value="" className="bg-dark-hover text-white">
+                  {ports.length === 0 ? 'Aucun port disponible' : 'Sélectionnez un port'}
+                </option>
                 {ports.map(port => (
                   <option key={port.id} value={port.id} className="bg-dark-hover text-white">
-                    {port.nomPort} ({port.typePort}) - {port.fraisPortuaires} {formData.currency}
+                    {port.nomPort} - {port.ville}
                   </option>
                 ))}
               </select>
+              {portMessage && (
+                <p className="mt-2 text-sm text-blue-600 italic">
+                  ℹ️ {portMessage}
+                </p>
+              )}
             </div>
 
             {/* Legal Identifiers */}
