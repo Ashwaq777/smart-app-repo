@@ -13,7 +13,8 @@ function Calculator() {
   const [countries, setCountries] = useState([])
   const [countriesData, setCountriesData] = useState([]) // Pour drapeaux et devises - affichage uniquement
   const [ports, setPorts] = useState([])
-  const [portMessage, setPortMessage] = useState(null) // Message pour pays enclavés
+  const [portMessage, setPortMessage] = useState(null)
+  const [portsLoading, setPortsLoading] = useState(false)
   
   const [formData, setFormData] = useState({
     categorie: '',
@@ -53,11 +54,6 @@ function Calculator() {
     }
   }, [formData.categorie])
 
-  useEffect(() => {
-    if (formData.paysDestination) {
-      loadPortsByCountry(formData.paysDestination)
-    }
-  }, [formData.paysDestination])
 
   const loadCategories = async () => {
     try {
@@ -78,19 +74,61 @@ function Calculator() {
 
   const loadCountries = async () => {
     try {
-      // Charger les pays depuis le backend (DONNÉES DE CALCUL - NE PAS MODIFIER)
-      const response = await tarifService.getCountries()
-      setCountries(response.data)
+      // Charger TOUTES les devises du monde (250+ pays)
+      const allCountriesData = await countriesService.getAll()
+      console.log(`✅ Loaded ${allCountriesData.length} countries with currency data from RestCountries API`)
+      const uniqueCurrencies = [...new Set(allCountriesData.map(c => c.currency.code))]
+      console.log(`💱 Total unique currencies: ${uniqueCurrencies.length}`)
+      setCountriesData(allCountriesData)
       
-      // Enrichir avec drapeaux depuis API externe (AFFICHAGE UNIQUEMENT)
-      try {
-        const countriesWithFlags = await countriesService.getAll()
-        setCountriesData(countriesWithFlags)
-      } catch (apiErr) {
-        console.log('Could not load country flags, continuing without them')
+      // Charger les pays depuis le backend pour les tarifs
+      const response = await tarifService.getCountries()
+      const backendCountries = response.data
+      console.log(`📋 Backend has ${backendCountries.length} countries with tariff data`)
+      
+      // Filtrer pour ne garder QUE les pays avec ports RÉELS
+      console.log('\n🔍 Filtering countries with real ports...')
+      const maritimeCountries = []
+      const excludedCountries = []
+      
+      for (const country of backendCountries) {
+        const countryData = allCountriesData.find(c => c.name === country)
+        
+        if (!countryData) {
+          console.log(`⚠️ ${country} - No currency data found`)
+          excludedCountries.push({ name: country, reason: 'No currency data' })
+          continue
+        }
+        
+        // Vérifier si le pays a des ports via l'API
+        const portsResult = await worldPortsService.getPortsByCountry(country, countryData)
+        
+        // Garder uniquement les pays avec ports RÉELS (pas de génériques)
+        if (portsResult.hasPorts && portsResult.ports.length > 0) {
+          // Vérifier qu'aucun port n'est générique
+          const hasGenericPort = portsResult.ports.some(p => p.isGeneric)
+          if (!hasGenericPort) {
+            maritimeCountries.push(country)
+            console.log(`✅ ${country} (${countryData.currency.code}) - ${portsResult.ports.length} port(s)`)
+          } else {
+            console.log(`❌ ${country} - Excluded (generic port)`)
+            excludedCountries.push({ name: country, reason: 'Generic port' })
+          }
+        } else {
+          const reason = portsResult.message || 'No ports available'
+          console.log(`❌ ${country} - Excluded (${reason})`)
+          excludedCountries.push({ name: country, reason })
+        }
       }
+      
+      console.log(`\n📊 FINAL RESULTS:`)
+      console.log(`✅ ${maritimeCountries.length} maritime countries WITH real ports`)
+      console.log(`❌ ${excludedCountries.length} countries excluded (no ports or landlocked)`)
+      console.log(`💱 ${allCountriesData.length} total countries with currencies available`)
+      
+      setCountries(maritimeCountries)
     } catch (err) {
-      console.error('Error loading countries:', err)
+      console.error('❌ Error loading countries:', err)
     }
   }
 
@@ -128,45 +166,69 @@ function Calculator() {
   }
 
   const loadPortsByCountry = async (country) => {
+    if (!country) {
+      setPorts([])
+      setPortMessage(null)
+      return
+    }
+    
+    setPortsLoading(true)
+    setPortMessage(null)
+    
     try {
+      console.log(`🚢 Loading ports for ${country}...`)
+      
       // Récupérer les données du pays pour vérifier s'il est enclavé
       const countryData = countriesData.find(c => c.name === country)
       
       // Charger les ports depuis le service mondial avec couverture 100%
       const portsResult = await worldPortsService.getPortsByCountry(country, countryData)
       
-      if (portsResult.hasPorts) {
-        // Formater pour compatibilité avec le backend
-        const formattedPorts = portsResult.ports.map((port, index) => ({
-          id: `${country}-${index}`,
-          nom: port.name,
-          nomPort: port.name,
-          ville: port.city,
-          pays: country,
-          typePort: 'Maritime',
-          capacity: port.capacity,
-          isGeneric: port.isGeneric || false
-        }))
+      if (portsResult.hasPorts && portsResult.ports.length > 0) {
+        // Utiliser les ports réels de la base UNCTAD avec frais calculés
+        const portsWithFees = portsResult.ports.map((port, index) => {
+          // Extraire les frais depuis la structure UNCTAD
+          const totalFees = port.totalFees || port.fees?.THC || 500
+          
+          return {
+            id: port.id || `${country.toLowerCase()}-${index + 1}`,
+            nom: port.name,
+            nomPort: port.name,
+            ville: port.city,
+            pays: country,
+            countryCode: port.countryCode,
+            typePort: 'Maritime',
+            capacity: port.capacity,
+            fraisPortuaires: totalFees, // Frais UNCTAD réels
+            currency: port.currency || 'USD',
+            region: port.region,
+            fees: port.fees, // Structure complète des frais (THC, pilotage, etc.)
+            coordinates: port.coordinates,
+            isGeneric: false // Tous les ports UNCTAD sont réels
+          }
+        })
         
-        setPorts(formattedPorts)
-        setPortMessage(portsResult.message)
+        console.log(`✅ Loaded ${portsWithFees.length} ports for ${country}`)
+        console.log('🔍 Port objects structure:', portsWithFees.map(p => ({
+          id: p.id,
+          name: p.nomPort,
+          city: p.ville,
+          fees: p.fraisPortuaires,
+          feesType: typeof p.fraisPortuaires
+        })))
+        setPorts(portsWithFees)
+        setPortMessage(null)
       } else {
-        // Pays enclavé - pas de ports
+        console.log(`❌ No ports available for ${country}`)
         setPorts([])
-        setPortMessage(portsResult.message)
+        setPortMessage(portsResult.message || `Aucun port disponible pour ${country}`)
       }
     } catch (err) {
       console.error('Error loading ports from API:', err)
-      // Fallback vers backend si erreur
-      try {
-        const response = await portService.getByCountry(country)
-        setPorts(response.data)
-        setPortMessage(null)
-      } catch (backendErr) {
-        console.error('Error loading backend ports:', backendErr)
-        setPorts([])
-        setPortMessage('Impossible de charger les ports pour ce pays')
-      }
+      setPorts([])
+      setPortMessage('Erreur lors du chargement des ports')
+    } finally {
+      setPortsLoading(false)
     }
   }
 
@@ -185,18 +247,25 @@ function Calculator() {
     if (name === 'paysDestination') {
       setFormData(prev => ({ ...prev, portId: '' }))
       setPorts([])
+      setPortMessage(null)
       
       // Charger automatiquement la devise du pays sélectionné
-      try {
-        const countryData = countriesData.find(c => c.name === value)
-        if (countryData && countryData.currency) {
-          setFormData(prev => ({
-            ...prev,
-            currency: countryData.currency.code
-          }))
+      if (value) {
+        try {
+          const countryData = countriesData.find(c => c.name === value)
+          if (countryData && countryData.currency) {
+            setFormData(prev => ({
+              ...prev,
+              currency: countryData.currency.code
+            }))
+            console.log(`💱 Auto-selected currency: ${countryData.currency.code} for ${value}`)
+          }
+        } catch (err) {
+          console.log('Could not load country currency automatically')
         }
-      } catch (err) {
-        console.log('Could not load country currency automatically')
+        
+        // Charger les ports pour ce pays
+        loadPortsByCountry(value)
       }
     }
   }
@@ -207,6 +276,14 @@ function Calculator() {
     setError(null)
     
     try {
+      console.log('\n🧮 CALCULATION START')
+      console.log('Input values:', {
+        FOB: formData.valeurFob,
+        Transport: formData.coutTransport,
+        Assurance: formData.assurance,
+        Currency: formData.currency
+      })
+      
       const calculationData = {
         codeHs: formData.codeHs,
         paysDestination: formData.paysDestination,
@@ -226,6 +303,17 @@ function Calculator() {
       }
       
       const response = await calculationService.calculateLandedCost(calculationData)
+      
+      console.log('✅ CALCULATION RESULT:')
+      console.log('CIF =', response.data.valeurCaf, '(should be FOB + Transport + Assurance)')
+      console.log('Douane =', response.data.montantDouane, '(should be CIF × taux_douane / 100)')
+      console.log('TVA =', response.data.montantTva, '(should be (CIF + Douane) × taux_tva / 100)')
+      console.log('Total =', response.data.coutTotal, '(should be CIF + Douane + TVA + Frais)')
+      console.log('Formulas verification:')
+      console.log('  FOB + Transport + Assurance =', 
+        parseFloat(formData.valeurFob) + parseFloat(formData.coutTransport) + parseFloat(formData.assurance))
+      console.log('  CIF from backend =', response.data.valeurCaf)
+      
       setResult(response.data)
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur lors du calcul')
@@ -412,11 +500,15 @@ function Calculator() {
                 className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200"
               >
                 <option value="" className="bg-dark-hover text-white">Sélectionnez un pays</option>
-                {countries.map(country => (
-                  <option key={country} value={country} className="bg-dark-hover text-white">
-                    {country}
-                  </option>
-                ))}
+                {countries.map(country => {
+                  const countryData = countriesData.find(c => c.name === country)
+                  const currencyCode = countryData?.currency?.code || ''
+                  return (
+                    <option key={country} value={country} className="bg-dark-hover text-white">
+                      {country}{currencyCode ? ` (${currencyCode})` : ''}
+                    </option>
+                  )
+                })}
               </select>
             </div>
 
@@ -428,21 +520,33 @@ function Calculator() {
                 name="portId"
                 value={formData.portId}
                 onChange={handleInputChange}
-                disabled={!formData.paysDestination || ports.length === 0}
+                disabled={!formData.paysDestination || portsLoading || ports.length === 0}
                 className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="" className="bg-dark-hover text-white">
-                  {ports.length === 0 ? 'Aucun port disponible' : 'Sélectionnez un port'}
+                <option value="">
+                  {portsLoading ? 'Chargement des ports...' : ports.length === 0 ? 'Aucun port disponible' : 'Sélectionnez un port'}
                 </option>
-                {ports.map(port => (
-                  <option key={port.id} value={port.id} className="bg-dark-hover text-white">
-                    {port.nomPort} - {port.ville}
-                  </option>
-                ))}
+                {ports.map(port => {
+                  // Extract numeric fee value if it's an object
+                  const feeValue = typeof port.fraisPortuaires === 'object' 
+                    ? (port.fraisPortuaires?.amount || port.fraisPortuaires?.value || 0)
+                    : (port.fraisPortuaires || 0)
+                  
+                  return (
+                    <option key={port.id} value={port.id}>
+                      {port.nomPort} - {port.ville}, {port.pays} | Frais: ${Math.round(feeValue)} USD
+                    </option>
+                  )
+                })}
               </select>
               {portMessage && (
                 <p className="mt-2 text-sm text-blue-600 italic">
                   ℹ️ {portMessage}
+                </p>
+              )}
+              {portsLoading && (
+                <p className="mt-2 text-sm text-gray-500 italic">
+                  ⏳ Chargement des ports et calcul des frais...
                 </p>
               )}
             </div>

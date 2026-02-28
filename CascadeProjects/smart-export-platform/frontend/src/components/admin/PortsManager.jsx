@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, Edit2, Trash2, Search } from 'lucide-react'
+import { Plus, Edit2, Trash2, Search, DollarSign } from 'lucide-react'
 import { portService } from '../../services/api'
+import { worldPortsService } from '../../services/worldPortsApi'
+import { REAL_PORTS_DATABASE } from '../../data/realPortsDatabase'
 
 function PortsManager() {
   const [ports, setPorts] = useState([])
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [selectedPort, setSelectedPort] = useState(null)
   const [editingPort, setEditingPort] = useState(null)
   const [formData, setFormData] = useState({
     nomPort: '',
@@ -22,8 +26,10 @@ function PortsManager() {
   const loadPorts = async () => {
     setLoading(true)
     try {
-      const response = await portService.getAll()
-      setPorts(response.data || [])
+      // Charger les ports depuis la base UNCTAD réelle
+      const allPorts = worldPortsService.getAllPorts()
+      console.log(`✅ Loaded ${allPorts.length} real ports from UNCTAD database`)
+      setPorts(allPorts)
     } catch (error) {
       console.error('Error loading ports:', error)
       setPorts([])
@@ -93,9 +99,15 @@ function PortsManager() {
   }
 
   const filteredPorts = ports.filter(port =>
-    port.nomPort.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    port.pays.toLowerCase().includes(searchTerm.toLowerCase())
+    port.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    port.country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    port.city?.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const showPortDetails = (port) => {
+    setSelectedPort(port)
+    setShowDetailsModal(true)
+  }
 
   return (
     <div>
@@ -127,16 +139,25 @@ function PortsManager() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nom du Port
+                  Port Name
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Pays
+                  City
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
+                  Country
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Frais Portuaires
+                  Currency
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  THC (per TEU)
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Port Dues
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Region
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -144,44 +165,133 @@ function PortsManager() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredPorts.map((port) => (
-                <tr key={port.id} className="hover:bg-gray-50">
+              {filteredPorts.map((port, index) => (
+                <tr key={port.id || index} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {port.nomPort}
+                    {port.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {port.pays}
+                    {port.city}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      port.typePort === 'Maritime' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-purple-100 text-purple-800'
-                    }`}>
-                      {port.typePort}
+                    <span className="flex items-center gap-1">
+                      <span className="text-lg">{port.countryCode === 'FR' ? '🇫🇷' : port.countryCode === 'MA' ? '🇲🇦' : port.countryCode === 'DE' ? '🇩🇪' : port.countryCode === 'CN' ? '🇨🇳' : '🌍'}</span>
+                      {port.country}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {port.fraisPortuaires.toFixed(2)} EUR
+                    {port.currency}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                    ${port.fees?.THC || 0}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    ${port.fees?.portDues || 0}/GRT
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {port.region}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
-                      onClick={() => openModal(port)}
+                      onClick={() => showPortDetails(port)}
                       className="text-primary-600 hover:text-primary-900 mr-3"
+                      title="View Details"
                     >
-                      <Edit2 className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(port.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <Trash2 className="h-4 w-4" />
+                      <DollarSign className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          
+          {filteredPorts.length === 0 && !loading && (
+            <div className="text-center py-8 text-gray-500">
+              No ports found matching your search.
+            </div>
+          )}
+        </div>
+      )}
+
+      {showDetailsModal && selectedPort && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h3 className="text-2xl font-bold mb-4 text-maritime-navy">
+              {selectedPort.name}
+            </h3>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <p className="text-sm text-gray-500">City</p>
+                <p className="font-semibold">{selectedPort.city}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Country</p>
+                <p className="font-semibold">{selectedPort.country} ({selectedPort.countryCode})</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Region</p>
+                <p className="font-semibold">{selectedPort.region}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Currency</p>
+                <p className="font-semibold">{selectedPort.currency}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Capacity (TEU)</p>
+                <p className="font-semibold">{selectedPort.capacity?.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Coordinates</p>
+                <p className="font-semibold text-xs">{selectedPort.coordinates?.lat}, {selectedPort.coordinates?.lon}</p>
+              </div>
+            </div>
+            
+            <div className="border-t pt-4">
+              <h4 className="font-bold text-lg mb-3">Fee Breakdown (UNCTAD Official Rates)</h4>
+              <div className="space-y-2 bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Terminal Handling Charge (THC) per TEU:</span>
+                  <span className="font-bold">${selectedPort.fees?.THC}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Port Dues (per GRT):</span>
+                  <span className="font-bold">${selectedPort.fees?.portDues}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Pilotage:</span>
+                  <span className="font-bold">${selectedPort.fees?.pilotage}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Mooring:</span>
+                  <span className="font-bold">${selectedPort.fees?.mooring}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Documentation:</span>
+                  <span className="font-bold">${selectedPort.fees?.documentation}</span>
+                </div>
+                <div className="border-t pt-2 mt-2 flex justify-between text-lg">
+                  <span className="font-bold text-maritime-navy">Estimated Total (1 TEU, 10000 GRT):</span>
+                  <span className="font-bold text-accent-600">
+                    ${(selectedPort.fees?.THC + (selectedPort.fees?.portDues * 10000) + selectedPort.fees?.pilotage + selectedPort.fees?.mooring + selectedPort.fees?.documentation).toFixed(0)}
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2 italic">
+                Source: UNCTAD Review of Maritime Transport - Official Published Data
+              </p>
+            </div>
+            
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

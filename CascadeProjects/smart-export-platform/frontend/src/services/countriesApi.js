@@ -44,7 +44,7 @@ export const countriesService = {
       // Récupérer les taux de change une seule fois
       const exchangeRates = await countriesService.getExchangeRates()
       
-      return response.data.map(country => {
+      const countriesWithCurrencies = response.data.map(country => {
         // Extraire la devise principale
         let currencyCode = null
         let currencyName = null
@@ -55,14 +55,14 @@ export const countriesService = {
           if (currencies.length > 0) {
             const [code, data] = currencies[0]
             currencyCode = code
-            currencyName = data.name
-            currencySymbol = data.symbol
+            currencyName = data?.name || code
+            currencySymbol = data?.symbol || code
           }
         }
         
         // Fallback intelligent si pas de devise
         if (!currencyCode) {
-          // Utiliser USD comme fallback universel
+          console.warn(`⚠️ No currency for ${country.name.common}, using USD fallback`)
           currencyCode = 'USD'
           currencyName = 'US Dollar'
           currencySymbol = '$'
@@ -74,6 +74,7 @@ export const countriesService = {
         return {
           name: country.name.common,
           code: country.cca2,
+          cca2: country.cca2,
           code3: country.cca3,
           landlocked: country.landlocked || false,
           currency: {
@@ -84,6 +85,19 @@ export const countriesService = {
           }
         }
       })
+      
+      // Vérifier que tous les pays ont une devise
+      const countriesWithoutCurrency = countriesWithCurrencies.filter(c => !c.currency.code)
+      if (countriesWithoutCurrency.length > 0) {
+        console.error(`❌ ${countriesWithoutCurrency.length} countries without currency:`, 
+          countriesWithoutCurrency.map(c => c.name))
+      }
+      
+      console.log(`✅ Loaded ${countriesWithCurrencies.length} countries with currencies`)
+      const uniqueCurrencies = [...new Set(countriesWithCurrencies.map(c => c.currency.code))]
+      console.log(`💱 Total unique currencies: ${uniqueCurrencies.length}`)
+      
+      return countriesWithCurrencies
     } catch (error) {
       console.error('Error fetching countries:', error)
       throw error

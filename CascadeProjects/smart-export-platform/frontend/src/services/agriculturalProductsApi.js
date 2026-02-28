@@ -71,6 +71,54 @@ const AGRICULTURAL_PRODUCTS = {
       categorie: 'Fruits',
       description: 'Fraises fraîches - Baie la plus exportée',
       principauxExportateurs: ['Espagne', 'États-Unis', 'Mexique', 'Égypte', 'Maroc']
+    },
+    {
+      id: 'kiwi',
+      codeHs: '0810.50',
+      nom: 'Kiwis',
+      categorie: 'Fruits',
+      description: 'Kiwis frais - Fruit à forte valeur ajoutée',
+      principauxExportateurs: ['Nouvelle-Zélande', 'Italie', 'Chili', 'Grèce', 'France']
+    },
+    {
+      id: 'citron',
+      codeHs: '0805.50',
+      nom: 'Citrons',
+      categorie: 'Fruits',
+      description: 'Citrons et limes frais - Agrumes acides',
+      principauxExportateurs: ['Espagne', 'Turquie', 'Mexique', 'Argentine', 'Afrique du Sud']
+    },
+    {
+      id: 'peche',
+      codeHs: '0809.30',
+      nom: 'Pêches',
+      categorie: 'Fruits',
+      description: 'Pêches fraîches - Fruit à noyau majeur',
+      principauxExportateurs: ['Espagne', 'Italie', 'Grèce', 'Chili', 'Afrique du Sud']
+    },
+    {
+      id: 'poire',
+      codeHs: '0808.30',
+      nom: 'Poires',
+      categorie: 'Fruits',
+      description: 'Poires fraîches - Fruit tempéré important',
+      principauxExportateurs: ['Chine', 'Argentine', 'États-Unis', 'Italie', 'Pays-Bas']
+    },
+    {
+      id: 'cerise',
+      codeHs: '0809.20',
+      nom: 'Cerises',
+      categorie: 'Fruits',
+      description: 'Cerises fraîches - Fruit premium',
+      principauxExportateurs: ['Chili', 'États-Unis', 'Turquie', 'Espagne', 'Italie']
+    },
+    {
+      id: 'pasteque',
+      codeHs: '0807.11',
+      nom: 'Pastèques',
+      categorie: 'Fruits',
+      description: 'Pastèques fraîches - Melon le plus consommé',
+      principauxExportateurs: ['Espagne', 'Mexique', 'Maroc', 'Grèce', 'Turquie']
     }
   ],
   'Légumes': [
@@ -137,6 +185,54 @@ const AGRICULTURAL_PRODUCTS = {
       categorie: 'Légumes',
       description: 'Ail frais ou réfrigéré',
       principauxExportateurs: ['Chine', 'Espagne', 'Argentine', 'Égypte', 'Pays-Bas']
+    },
+    {
+      id: 'brocoli',
+      codeHs: '0704.90',
+      nom: 'Brocolis',
+      categorie: 'Légumes',
+      description: 'Brocolis frais - Chou-fleur vert',
+      principauxExportateurs: ['Espagne', 'Mexique', 'Italie', 'France', 'Pays-Bas']
+    },
+    {
+      id: 'mais',
+      codeHs: '0709.99',
+      nom: 'Maïs doux',
+      categorie: 'Légumes',
+      description: 'Maïs doux frais - Légume grain',
+      principauxExportateurs: ['États-Unis', 'France', 'Hongrie', 'Thaïlande', 'Belgique']
+    },
+    {
+      id: 'courgette',
+      codeHs: '0709.90',
+      nom: 'Courgettes',
+      categorie: 'Légumes',
+      description: 'Courgettes fraîches - Cucurbitacée majeure',
+      principauxExportateurs: ['Espagne', 'Maroc', 'Pays-Bas', 'Mexique', 'Italie']
+    },
+    {
+      id: 'aubergine',
+      codeHs: '0709.30',
+      nom: 'Aubergines',
+      categorie: 'Légumes',
+      description: 'Aubergines fraîches - Solanacée importante',
+      principauxExportateurs: ['Espagne', 'Pays-Bas', 'Turquie', 'Maroc', 'Italie']
+    },
+    {
+      id: 'chou',
+      codeHs: '0704.10',
+      nom: 'Choux',
+      categorie: 'Légumes',
+      description: 'Choux-fleurs et brocolis frais',
+      principauxExportateurs: ['Espagne', 'France', 'Pays-Bas', 'Pologne', 'Italie']
+    },
+    {
+      id: 'haricot',
+      codeHs: '0708.20',
+      nom: 'Haricots verts',
+      categorie: 'Légumes',
+      description: 'Haricots verts frais - Légumineuse fraîche',
+      principauxExportateurs: ['Maroc', 'Kenya', 'Égypte', 'Espagne', 'France']
     }
   ]
 }
